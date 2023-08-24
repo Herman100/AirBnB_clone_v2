@@ -45,11 +45,12 @@ class FileStorage:
                     'Review': Review
                   }
         try:
-            temp = {}
             with open(FileStorage.__file_path, 'r') as f:
-                temp = json.load(f)
-                for key, val in temp.items():
-                    self.all()[key] = classes[val['__class__']](**val)
+                if f.read().strip():  # check if file is not empty
+                    f.seek(0)  # reset file pointer to beginning
+                    temp = json.load(f)
+                    for key, val in temp.items():
+                        self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
 
