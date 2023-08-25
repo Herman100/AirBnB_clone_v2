@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer, Float, ForeignKey
+from sqlalchemy.orm import relationship
 
 
 class Place(BaseModel, Base):
@@ -16,3 +17,6 @@ class Place(BaseModel, Base):
     price_by_night = Column(Integer, default=0, nullable=False)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
+
+    # Establish relationship with Review
+    reviews = relationship("Review", backref="place", cascade="all, delete")
