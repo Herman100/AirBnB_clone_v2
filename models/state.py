@@ -3,7 +3,7 @@
 from models.base_model import BaseModel, Base
 from models.city import City
 from models.engine.file_storage import FileStorage
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Integer
 from sqlalchemy.orm import relationship
 
 
