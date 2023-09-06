@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # creates a deployment script for web static
 
-sudo apt-get update
+sudo apt-get -y update
 if ! command -v nginx &> /dev/null; then
     sudo apt-get -y install nginx
 fi
 sudo mkdir -p /data/web_static/releases/test/
-sudo mkdir /data/web_static/shared/
+sudo mkdir -p /data/web_static/shared/
 echo "Simple content" | sudo tee /data/web_static/releases/test/index.html
 
 if [ -L "/data/web_static/current" ]; then
-    rm "/data/web_static/current"
+    rm -R "/data/web_static/current"
 fi
 
 ln -s /data/web_static/releases/test/ /data/web_static/current
