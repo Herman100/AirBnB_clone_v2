@@ -1,20 +1,28 @@
 #!/usr/bin/env bash
-# creates a deployment script for web static
+# A script that configures nginx and sets up web static as per specifications
+apt-get -y update
 
-sudo apt-get update
-sudo apt-get -y install nginx
-sudo mkdir -p /data/web_static/releases/test/
-sudo mkdir /data/web_static/shared/
-echo "Simple content" | sudo tee /data/web_static/releases/test/index.html
-
-if [ -L "/data/web_static/current" ]; then
-    rm "/data/web_static/current"
+if ! command -v nginx &> /dev/null; then
+	apt-get -y install nginx
 fi
 
-ln -s /data/web_static/releases/test/ /data/web_static/current
+mkdir -p /data/web_static/releases/test/
+mkdir -p /data/web_static/shared/
 
-sudo chown -R ubuntu:ubuntu /data/
+echo "Testing nginx installation" | tee /data/web_static/releases/test/index.html > /dev/null
 
-sudo sed -i '17i \\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n' /etc/nginx/sites-available/default
+if [ -L /data/web_static/current/ ]; then
+	rm -R /data/web_static/current/
+fi
+ln -sf /data/web_static/releases/test /data/web_static/current
 
-sudo service nginx restart
+chown -R ubuntu:ubuntu /data/
+
+loc="location /hbnb_static {"
+al="alias /data/web_static/current/;"
+
+sed -i "s/server_name localhost;/server_name _;/" /etc/nginx/sites-available/default
+sed -i "s@root /var/www/html;@root /data/web_static/current;@" /etc/nginx/sites-available/default
+sed -i "/server_name _;/a \\\n\t$loc\n\t\t$al\n\t}" /etc/nginx/sites-available/default
+
+service nginx start
