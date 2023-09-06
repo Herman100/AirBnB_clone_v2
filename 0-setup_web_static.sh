@@ -2,7 +2,9 @@
 # creates a deployment script for web static
 
 sudo apt-get update
-sudo apt-get -y install nginx
+if ! command -v nginx &> /dev/null; then
+    sudo apt-get -y install nginx
+fi
 sudo mkdir -p /data/web_static/releases/test/
 sudo mkdir /data/web_static/shared/
 echo "Simple content" | sudo tee /data/web_static/releases/test/index.html
