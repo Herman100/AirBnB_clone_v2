@@ -21,5 +21,5 @@ sudo chown -R ubuntu:ubuntu /data/
 
 sed -i "s/server_name localhost;/server_name _;/" /etc/nginx/sites-available/default
 sudo sed -i '/server_name _;/a \\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n' /etc/nginx/sites-available/default
-#sed -i "/server_name _;/a \\\n\tlocation /hbnb_static {\n\t\talias /data/web_static/current/;\n\t}" /etc/nginx/sites-available/default
+
 sudo service nginx restart
