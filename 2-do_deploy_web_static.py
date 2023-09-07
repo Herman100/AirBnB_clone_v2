@@ -1,36 +1,41 @@
 #!/usr/bin/python3
-"""
-Fabric script for deploying an archive to web servers
-"""
+"""This script (based on the file 1-pack_web_static.py) that
+distributes an archive to your web servers, using the function do_deploy"""
+
 
 from fabric.api import env, put, run
 from os.path import exists
-
+import shlex
 env.hosts = ['100.25.182.117', '52.86.206.209']
+env.user = 'ubuntu'
 
 
 def do_deploy(archive_path):
-    """deploys code to server"""
+    """All remote commands must be executed on your both web servers
+    (using env.hosts = ['<IP web-01>', 'IP web-02'] variable in your script)"""
     if not exists(archive_path):
         return False
-
     try:
-        file_name = archive_path.split("/")[-1]
-        name = file_name.split(".")[0]
-        tmp_path = "/tmp/" + file_name
-        data_path = "/data/web_static/releases/" + name + "/"
-        current_path = "/data/web_static/current"
+        pname = archive_path.replace('/', ' ')
+        pname = shlex.split(pname)
+        pname = pname[-1]
 
-        put(archive_path, tmp_path)
-        run("mkdir -p " + data_path)
-        run("tar -xzf " + tmp_path + " -C " + data_path)
-        run("rm " + tmp_path)
-        run("mv " + data_path + "web_static/* " + data_path)
-        run("rm -rf" + " /data/web_static/releases/" + name + "/web_static")
-        run("rm -rf " + current_path)
-        run("ln -s " + data_path + " " + current_path)
+        wname = pname.replace('.', ' ')
+        wname = shlex.split(wname)
+        wname = wname[0]
 
+        releases_path = "/data/web_static/releases/{}/".format(wname)
+        tmp_path = "/tmp/{}".format(pname)
+
+        put(archive_path, "/tmp/")
+        run("mkdir -p {}".format(releases_path))
+        run("tar -xzf {} -C {}".format(tmp_path, releases_path))
+        run("rm {}".format(tmp_path))
+        run("mv {}web_static/* {}".format(releases_path, releases_path))
+        run("rm -rf {}web_static".format(releases_path))
+        run("rm -rf /data/web_static/current")
+        run("ln -s {} /data/web_static/current".format(releases_path))
+        print("New version deployed!")
         return True
-    except Exception as e:
-        print(e)
+    except BaseException:
         return False
