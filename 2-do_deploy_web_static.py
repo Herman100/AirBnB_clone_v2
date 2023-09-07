@@ -1,30 +1,55 @@
 #!/usr/bin/python3
-"""fabric script that deploys compressed archive to servers"""
 
-from fabric.api import env, put, run
-from os.path import exists
+""" A python script that compreses the content of the web folder
+"""
+
+from fabric.api import run, put, env
+from datetime import datetime
+import os
 
 env.hosts = ['100.25.182.117', '52.86.206.209']
 
-
 def do_deploy(archive_path):
-    """Distributes an archive to your web servers"""
-    if not exists(archive_path):
+    """
+    A python fabric function that deploys and distributes archive
+    to your web servers
+    Arguments:
+        archive_path - the path to archive
+    """
+
+    if not os.path.exists(archive_path):
         return False
 
-    file_name = archive_path.split("/")[-1]
-    name = file_name.split(".")[0]
+    for host in env.hosts:
+        f_name = os.path.basename(archive_path)
+        name = f_name.split('.')
+        folder = name[0]
+        full_folder = '/data/web_static/releases/{}/'.format(folder)
 
-    try:
-        put(archive_path, "/tmp/{}".format(file_name))
-        run("mkdir -p /data/web_static/releases/{}/".format(name))
-        run("tar -xzf /tmp/{} -C \
-                /data/web_static/releases/{}/".format(file_name, name))
-        run("rm /tmp/{}".format(file_name))
-        run("rm -rf /data/web_static/current")
-        run("ln -s /data/web_static/releases/{}/web_static/ \
-            /data/web_static/current".format(name))
-        return True
-    except Exception as e:
-        print(e)
-        return False
+        r = put(archive_path, '/tmp/{}'.format(f_name))
+        if r.failed:
+            return False
+
+        r = run('mkdir -p {}'.format(full_folder))
+        if r.failed:
+            return False
+
+        r = run('tar -xzf /tmp/{} -C {}'.format(f_name, full_folder))
+        if r.failed:
+            return False
+
+        r = run('rm -f /tmp/{}'.format(f_name))
+        if r.failed:
+            return False
+
+        r = run('rm -rf /data/web_static/current/')
+        if r.failed:
+            return False
+
+        data = 'ln -s {}/web_static/* /data/web_static/current/'
+        r = run(data.format(full_folder))
+        if r.failed:
+            return False
+
+
+    return True
