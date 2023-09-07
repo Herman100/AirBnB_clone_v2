@@ -10,7 +10,6 @@ env.hosts = ['100.25.182.117', '52.86.206.209']
 
 
 def do_deploy(archive_path):
-    """Distributes an archive to your web servers"""
     if not exists(archive_path):
         return False
 
@@ -25,7 +24,7 @@ def do_deploy(archive_path):
         run("mkdir -p " + data_path)
         run("tar -xzf " + tmp_path + " -C " + data_path)
         run("rm " + tmp_path)
-        run("cp -r " + data_path + "web_static/* " + data_path)
+        run("mv " + data_path + "web_static/* " + data_path)
         run("rm -rf " + data_path + "web_static")
         run("rm -rf " + current_path)
         run("ln -s " + data_path + " " + current_path)
