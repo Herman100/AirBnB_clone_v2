@@ -9,6 +9,7 @@ import os
 
 env.hosts = ['100.25.182.117', '52.86.206.209']
 
+
 def do_deploy(archive_path):
     """
     A python fabric function that deploys and distributes archive
@@ -50,6 +51,5 @@ def do_deploy(archive_path):
         r = run(data.format(full_folder))
         if r.failed:
             return False
-
 
     return True
