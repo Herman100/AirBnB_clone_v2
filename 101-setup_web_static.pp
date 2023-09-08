@@ -1,48 +1,21 @@
-# sets up web servers for deployment of web_static
-exec { 'update':
-  command => '/usr/bin/apt-get -y update',
-}
-
-package { 'nginx':
-  ensure  => present,
-  require => Exec['update'],
-}
-
-file { '/data/web_static/releases/test/':
-  ensure => 'directory',
-  owner  => 'ubuntu',
-  group  => 'ubuntu',
-}
-
-file { '/data/web_static/shared/':
-  ensure => 'directory',
-  owner  => 'ubuntu',
-  group  => 'ubuntu',
-}
-
-file { '/data/web_static/releases/test/index.html':
-  ensure  => present,
-  content => '<html>\n\t<head>\n\t</head>\n\t<body>\n\t\tHolberton School\n\t</body>\n</html>',
-}
-
-file { '/data/web_static/current':
-  ensure => 'link',
-  target => '/data/web_static/releases/test/',
-}
-
-file_line { 'server_name':
-  path  => '/etc/nginx/sites-available/default',
-  line  => '\tserver_name _;',
-  match => '^(\s*)server_name.*$',
-}
-
-file_line { 'location':
-  path  => '/etc/nginx/sites-available/default',
-  line  => '\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n',
-  after => '^(\s*)server_name.*$',
-}
-
-service { 'nginx':
-  ensure => running,
-  enable => true,
+# puppet manifest preparing a server for static content deployment
+exec { 'Update server':
+  command => '/usr/bin/env apt-get -y update',
+} ~> exec {'Install NGINX':
+  command => '/usr/bin/env apt-get -y install nginx',
+} ~> exec {'Creates directory release/test':
+  command => '/usr/bin/env mkdir -p /data/web_static/releases/test/',
+} ~> exec {'Creates directories shared':
+  command => '/usr/bin/env mkdir -p /data/web_static/shared/',
+} ~> exec {'Write Hello World in index with tee command':
+  command => '/usr/bin/env echo "Hello Wolrd Puppet" | sudo tee /data/web_static/releases/test/index.html',
+} ~> exec {'Create Symbolic link':
+  command => '/usr/bin/env ln -sf /data/web_static/releases/test /data/web_static/current',
+} ~> exec {'Change owner and group like ubuntu':
+  command => '/usr/bin/env chown -R ubuntu:ubuntu /data',
+} ~> exec {'Add new configuration to NGINX':
+  command => "/usr/bin/env sed -i \"/listen 80 default_server;/a location /hbnb_static/ { 
+alias /data/web_static/current/;}\" /etc/nginx/sites-available/default",
+} ~> exec {'Restart NGINX':
+  command => '/usr/bin/env service nginx restart',
 }
