@@ -4,6 +4,7 @@ This module starts a Flask web application
 """
 
 from flask import Flask
+from flask import abort
 app = Flask(__name__)
 
 
@@ -51,12 +52,13 @@ def python_default_text(text):
 @app.route('/number/<n>', strict_slashes=False)
 def interger_text(n):
     """
-    This function returns the string "n is a number" followed
-    by the value of the text variable
-    when the route '/number/<n>' is requested with default 'is cool'
+    This function returns the string "n is a number"
+    when the route '/number/<n>' is requested if n is an integer
     """
     if n.isdigit():
         return "{} is a number".format(n)
+    else:
+        abort(404)
 
 
 if __name__ == "__main__":
