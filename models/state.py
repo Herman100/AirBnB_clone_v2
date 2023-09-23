@@ -18,3 +18,13 @@ class State(BaseModel, Base):
         state_id equals to the current State.id"""
         return [city for city in FileStorage().all(City).values()
                 if city.state_id == self.id]
+
+    @property
+    def cities(self):
+        """Returns the list of City instances with
+        state_id equals to the current State.id"""
+        if isinstance(storage, FileStorage):
+            return [city for city in storage.all(City).values()
+                    if city.state_id == self.id]
+        else:
+            return self.cities
