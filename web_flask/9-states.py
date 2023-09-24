@@ -37,7 +37,7 @@ def list_cities(id):
         if state.id == id:
             cities = sorted(state.cities, key=lambda city: city.name)
             return render_template('9-states.html', state=state, cities=cities)
-    return render_template('9-states.html')
+    return render_template('9-states.html', states=[])
 
 
 if __name__ == '__main__':
