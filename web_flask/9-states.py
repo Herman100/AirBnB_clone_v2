@@ -17,27 +17,24 @@ def close_db(exception=None):
     storage.close()
 
 
-@app.route('/states', strict_slashes=False)
-def list_states():
+@app.route('/states', defaults={'id': None}, strict_slashes=False)
+@app.route('/states/<id>', strict_slashes=False)
+def list_states(id):
     """
     Provides a list of all the states to be sorted and rendered.
+    If an id is provided, it provides list of all the cities in that state.
     """
     states = storage.all(State).values()
     states = sorted(states, key=lambda state: state.name)
-    return render_template('9-states.html', states=states)
-
-
-@app.route('/states/<id>', strict_slashes=False)
-def list_cities(id):
-    """
-    Provides a list of all the cities in a state to be sorted and rendered.
-    """
-    states = storage.all(State).values()
-    for state in states:
-        if state.id == id:
-            cities = sorted(state.cities, key=lambda city: city.name)
-            return render_template('9-states.html', state=state, cities=cities)
-    return render_template('9-states.html')
+    if id is None:
+        return render_template('9-states.html', states=states)
+    else:
+        for state in states:
+            if state.id == id:
+                cities = sorted(state.cities, key=lambda city: city.name)
+                return render_template('9-states.html',
+                                       state=state, cities=cities)
+        return render_template('9-states.html')
 
 
 if __name__ == '__main__':
