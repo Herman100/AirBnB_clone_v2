@@ -23,8 +23,8 @@ def city_by_states():
     """
     Provides a list of all the states to be sorted and rendered.
     """
-    states = states=storage.all('State').values()
-    return render_template('8-cities_by_states.html', states=states)
+    return render_template('8-cities_by_states.html',
+                           states=storage.all('State').values())
 
 
 if __name__ == '__main__':
