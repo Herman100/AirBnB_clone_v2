@@ -5,22 +5,21 @@
     <title>HBNB</title>
 </head>
 <body>
+    {% for state in states %}
     <h1>States</h1>
     <ul>
-        {% for state in states %}
         <li>{{ state.id }}: <b>{{ state.name }}</b></li>
-        {% endfor %}
-        {% if state %}
-        <h1>State: {{state.name}}</h1>
-        <h3>Cities:</h3>
-        <ul>
-            {% for city in cities %}
-            <li>{{ city.id }}: <b>{{ city.name }}</b></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <h1>Not found!</h1>
-        {% endif %}
     </ul>
+    {% endfor %}
+    {% if state %}
+    <h1>State: {{state.name}}</h1>
+    <h3>Cities:</h3>
+    <ul>
+        <li>{{ state.id }}: <b>{{ city.name }}</b></li>
+    </ul>
+    {% endif %}
+    {% else %}
+    <h1>Not found!</h1>
+    {% endif %}
 </body>
 </html>
