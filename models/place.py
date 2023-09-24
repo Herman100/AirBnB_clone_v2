@@ -40,9 +40,11 @@ class Place(BaseModel, Base):
         return [amenity for amenity in storage.all(Amenity).values()
                 if amenity.place_id == self.id]
 
+    
+
     @amenities.setter
     def amenities(self, obj):
         """Handles append method for adding an
         Amenity.id to the attribute amenity_ids"""
         if isinstance(obj, Amenity):
-            self.amenity_ids.append(obj.id)
+            self.amenities.append(obj)

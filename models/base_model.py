@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 """This module defines a base class for all models in our hbnb clone"""
-import uuid
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, DateTime
 from datetime import datetime
 import models
+import uuid
 
 Base = declarative_base()
 
@@ -24,7 +24,15 @@ class BaseModel:
             for key, value in kwargs.items():
                 if key == '__class__':
                     continue
-                setattr(self, key, value)
+                elif key == "created_at" or key == "updated_at":
+                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+                    setattr(self, key, value)
+            if "id" not in kwargs:
+                self.id = str(uuid.uuid4())
+            if "created_at" not in kwargs:
+                self.created_at = datetime.now()
+            if "updated_at" not in kwargs:
+                self.updated_at = datetime.now()
 
     def __str__(self):
         """Returns a string representation of the instance"""
