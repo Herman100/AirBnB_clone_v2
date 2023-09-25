@@ -2,24 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>HBNB</title>
+    <title>States</title>
 </head>
 <body>
-    {% for state in states %}
     <h1>States</h1>
     <ul>
+        {% for state in states %}
         <li>{{ state.id }}: <b>{{ state.name }}</b></li>
-    </ul>
-    {% endfor %}
-    {% if state %}
-    <h1>State: {{state.name}}</h1>
-    <h3>Cities:</h3>
-    <ul>
+        {% endfor %}
+        {% if state %}
+        <h1>State: {{state.name}}</h1>
+        <h3>Cities:</h3>
+        <ul>
+            {% for city in cities %}
             <li>{{ city.id }}: <b>{{ city.name }}</b></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <h1>Not found!</h1>
+        {% endif %}
     </ul>
-    {% endif %}
-    {% else %}
-    <h1>Not found!</h1>
-    {% endif %}
 </body>
 </html>
